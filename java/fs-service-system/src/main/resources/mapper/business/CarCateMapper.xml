@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fs.business.mapper.CarCateMapper">
+    
+    <resultMap type="CarCate" id="CarCateResult">
+        <result property="cateId"    column="cate_id"    />
+        <result property="cateName"    column="cate_name"    />
+        <result property="sort"    column="sort"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="sysUserId"    column="sys_user_id"    />
+        <result property="isDelete"    column="is_delete"    />
+    </resultMap>
+
+    <sql id="selectCarCateVo">
+        select cate_id, cate_name, sort, create_time, sys_user_id, is_delete from tb_car_cate
+    </sql>
+
+    <select id="selectCarCateList" parameterType="CarCate" resultMap="CarCateResult">
+        <include refid="selectCarCateVo"/>
+        <where>  
+            <if test="cateName != null  and cateName != ''"> and cate_name like concat('%', #{cateName}, '%')</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="sysUserId != null  and sysUserId != ''"> and sys_user_id = #{sysUserId}</if>
+            <if test="isDelete != null "> and is_delete = #{isDelete}</if>
+        </where>
+    </select>
+    
+    <select id="selectCarCateById" parameterType="Long" resultMap="CarCateResult">
+        <include refid="selectCarCateVo"/>
+        where cate_id = #{cateId}
+    </select>
+        
+    <insert id="insertCarCate" parameterType="CarCate" useGeneratedKeys="true" keyProperty="cateId">
+        insert into tb_car_cate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cateName != null">cate_name,</if>
+            <if test="sort != null">sort,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="sysUserId != null">sys_user_id,</if>
+            <if test="isDelete != null">is_delete,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cateName != null">#{cateName},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="sysUserId != null">#{sysUserId},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCarCate" parameterType="CarCate">
+        update tb_car_cate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cateName != null">cate_name = #{cateName},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="sysUserId != null">sys_user_id = #{sysUserId},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+        </trim>
+        where cate_id = #{cateId}
+    </update>
+
+    <delete id="deleteCarCateById" parameterType="Long">
+        delete from tb_car_cate where cate_id = #{cateId}
+    </delete>
+
+    <delete id="deleteCarCateByIds" parameterType="String">
+        delete from tb_car_cate where cate_id in 
+        <foreach item="cateId" collection="array" open="(" separator="," close=")">
+            #{cateId}
+        </foreach>
+    </delete>
+    
+</mapper>

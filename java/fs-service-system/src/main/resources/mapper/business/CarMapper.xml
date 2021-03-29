@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fs.business.mapper.CarMapper">
+    
+    <resultMap type="Car" id="CarResult">
+        <result property="carId"    column="car_id"    />
+        <result property="carNumber"    column="car_number"    />
+        <result property="cateId"    column="cate_id"    />
+        <result property="carType"    column="car_type"    />
+        <result property="brand"    column="brand"    />
+        <result property="model"    column="model"    />
+        <result property="seatNum"    column="seat_num"    />
+        <result property="fuelLabel"    column="fuel_label"    />
+        <result property="gasCard"    column="gas_card"    />
+        <result property="engineNumber"    column="engine_number"    />
+        <result property="carBuyTime"    column="car_buy_time"    />
+        <result property="carState"    column="car_state"    />
+        <result property="price"    column="price"    />
+        <result property="oilCost"    column="oil_cost"    />
+        <result property="oilConsumption"    column="oil_consumption"    />
+        <result property="administrators"    column="administrators"    />
+        <result property="driverId"    column="driver_id"    />
+        <result property="sort"    column="sort"    />
+        <result property="note"    column="note"    />
+        <result property="sysUserId"    column="sys_user_id"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectCarVo">
+        select car_id, car_number, cate_id, car_type, brand, model, seat_num, fuel_label, gas_card, engine_number, car_buy_time, car_state, price, oil_cost, oil_consumption, administrators, driver_id, sort, note, sys_user_id, is_delete, create_time from tb_car
+    </sql>
+
+    <select id="selectCarList" parameterType="Car" resultMap="CarResult">
+        <include refid="selectCarVo"/>
+        <where>  
+            <if test="carNumber != null  and carNumber != ''"> and car_number like concat('%', #{carNumber}, '%')</if>
+            <if test="cateId != null "> and cate_id = #{cateId}</if>
+            <if test="carType != null  and carType != ''"> and car_type = #{carType}</if>
+            <if test="brand != null  and brand != ''"> and brand = #{brand}</if>
+            <if test="fuelLabel != null  and fuelLabel != ''"> and fuel_label = #{fuelLabel}</if>
+            <if test="gasCard != null  and gasCard != ''"> and gas_card = #{gasCard}</if>
+            <if test="engineNumber != null  and engineNumber != ''"> and engine_number = #{engineNumber}</if>
+            <if test="carBuyTime != null "> and car_buy_time = #{carBuyTime}</if>
+            <if test="carState != null  and carState != ''"> and car_state = #{carState}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="driverId != null "> and driver_id = #{driverId}</if>
+        </where>
+    </select>
+
+
+    <select id="getCustomerCarList" parameterType="Car" resultMap="CarResult">
+         select a.car_number, a.cate_id, a.car_type, a.brand, a.model, a.seat_num
+         , a.fuel_label, a.gas_card, a.engine_number, a.car_buy_time
+         , a.car_state, a.price, a.oil_cost, a.oil_consumption, a.administrators
+         , a.driver_id, a.sort, a.note, a.sys_user_id, a.create_time
+         , c.cate_name as cateName, d.name as driver
+         from tb_car as a
+         left join tb_car_cate as c on c.cate_id = a.cate_id
+         left join tb_driver d on d.driver_id = a.driver_id
+         where a.is_delete = 0
+         ORDER BY a.create_time DESC
+    </select>
+
+    <select id="selectCarById" parameterType="Long" resultMap="CarResult">
+        <include refid="selectCarVo"/>
+        where car_id = #{carId}
+    </select>
+        
+    <insert id="insertCar" parameterType="Car" useGeneratedKeys="true" keyProperty="carId">
+        insert into tb_car
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="carNumber != null">car_number,</if>
+            <if test="cateId != null">cate_id,</if>
+            <if test="carType != null">car_type,</if>
+            <if test="brand != null">brand,</if>
+            <if test="model != null">model,</if>
+            <if test="seatNum != null">seat_num,</if>
+            <if test="fuelLabel != null">fuel_label,</if>
+            <if test="gasCard != null">gas_card,</if>
+            <if test="engineNumber != null">engine_number,</if>
+            <if test="carBuyTime != null">car_buy_time,</if>
+            <if test="carState != null and carState != ''">car_state,</if>
+            <if test="price != null">price,</if>
+            <if test="oilCost != null">oil_cost,</if>
+            <if test="oilConsumption != null">oil_consumption,</if>
+            <if test="administrators != null and administrators != ''">administrators,</if>
+            <if test="driverId != null">driver_id,</if>
+            <if test="sort != null">sort,</if>
+            <if test="note != null">note,</if>
+            <if test="sysUserId != null">sys_user_id,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="carNumber != null">#{carNumber},</if>
+            <if test="cateId != null">#{cateId},</if>
+            <if test="carType != null">#{carType},</if>
+            <if test="brand != null">#{brand},</if>
+            <if test="model != null">#{model},</if>
+            <if test="seatNum != null">#{seatNum},</if>
+            <if test="fuelLabel != null">#{fuelLabel},</if>
+            <if test="gasCard != null">#{gasCard},</if>
+            <if test="engineNumber != null">#{engineNumber},</if>
+            <if test="carBuyTime != null">#{carBuyTime},</if>
+            <if test="carState != null and carState != ''">#{carState},</if>
+            <if test="price != null">#{price},</if>
+            <if test="oilCost != null">#{oilCost},</if>
+            <if test="oilConsumption != null">#{oilConsumption},</if>
+            <if test="administrators != null and administrators != ''">#{administrators},</if>
+            <if test="driverId != null">#{driverId},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="note != null">#{note},</if>
+            <if test="sysUserId != null">#{sysUserId},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCar" parameterType="Car">
+        update tb_car
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="carNumber != null">car_number = #{carNumber},</if>
+            <if test="cateId != null">cate_id = #{cateId},</if>
+            <if test="carType != null">car_type = #{carType},</if>
+            <if test="brand != null">brand = #{brand},</if>
+            <if test="model != null">model = #{model},</if>
+            <if test="seatNum != null">seat_num = #{seatNum},</if>
+            <if test="fuelLabel != null">fuel_label = #{fuelLabel},</if>
+            <if test="gasCard != null">gas_card = #{gasCard},</if>
+            <if test="engineNumber != null">engine_number = #{engineNumber},</if>
+            <if test="carBuyTime != null">car_buy_time = #{carBuyTime},</if>
+            <if test="carState != null and carState != ''">car_state = #{carState},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="oilCost != null">oil_cost = #{oilCost},</if>
+            <if test="oilConsumption != null">oil_consumption = #{oilConsumption},</if>
+            <if test="administrators != null and administrators != ''">administrators = #{administrators},</if>
+            <if test="driverId != null">driver_id = #{driverId},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="note != null">note = #{note},</if>
+            <if test="sysUserId != null">sys_user_id = #{sysUserId},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where car_id = #{carId}
+    </update>
+
+    <delete id="deleteCarById" parameterType="Long">
+        delete from tb_car where car_id = #{carId}
+    </delete>
+
+    <delete id="deleteCarByIds" parameterType="String">
+        delete from tb_car where car_id in 
+        <foreach item="carId" collection="array" open="(" separator="," close=")">
+            #{carId}
+        </foreach>
+    </delete>
+    
+</mapper>
